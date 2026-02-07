@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music Player</title>
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#121212;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.player{
+  width:320px;
+  background:#181818;
+  border-radius:20px;
+  padding:20px;
+}
+.cover{
+  width:100%;
+  aspect-ratio:1/1;
+  border-radius:15px;
+  object-fit:cover;
+}
+h2{margin:10px 0 0}
+p{margin:5px 0;color:#aaa}
+
+.progress{
+  width:100%;
+  -webkit-appearance:none;
+  height:4px;
+  background:#404040;
+  border-radius:2px;
+}
+.progress::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:12px;
+  height:12px;
+  background:#1db954;
+  border-radius:50%;
+}
+.time{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:#aaa;
+}
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  margin-top:15px;
+}
+button{
+  width:50px;
+  height:50px;
+  border:none;
+  border-radius:50%;
+  background:#1db954;
+  color:black;
+  font-size:18px;
+}
+.top-controls{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  margin:10px 0;
+}
+.icon-btn{
+  background:none;
+  border:none;
+  font-size:20px;
+  color:#aaa;
+}
+.icon-btn.active{color:#1db954}
+</style>
+</head>
+<body>
+
+<div class="player">
+  <img src="cover/cover1.jpg" class="cover" id="cover">
+  <h2 id="title">About You</h2>
+  <p id="artist">The 1975</p>
+
+  <div class="top-controls">
+    <button class="icon-btn" id="shuffle">🔀</button>
+  </div>
+
+  <input type="range" class="progress" id="progress" value="0">
+  <div class="time">
+    <span id="current">0:00</span>
+    <span id="duration">0:00</span>
+  </div>
+
+  <div class="controls">
+    <button id="prev">⏮</button>
+    <button id="play">▶</button>
+    <button id="next">⏭</button>
+  </div>
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+const songs=[
+ {
+  title:"About You",
+  artist:"The 1975",
+  src:"lagu/aboutyou.mp3",
+  cover:"cover/cover1.jpg"
+ }
+];
+
+let i=0,isShuffle=false;
+const audio=document.getElementById("audio");
+const play=document.getElementById("play");
+const progress=document.getElementById("progress");
+
+function load(){
+  audio.src=songs[i].src;
+  document.getElementById("title").textContent=songs[i].title;
+  document.getElementById("artist").textContent=songs[i].artist;
+  document.getElementById("cover").src=songs[i].cover;
+}
+load();
+
+play.onclick=()=>{
+  if(audio.paused){audio.play();play.textContent="⏸"}
+  else{audio.pause();play.textContent="▶"}
+}
+
+audio.ontimeupdate=()=>{
+  progress.value=(audio.currentTime/audio.duration)*100||0;
+}
+
+progress.oninput=()=>{
+  audio.currentTime=(progress.value/100)*audio.duration;
+}
+
+document.getElementById("shuffle").onclick=function(){
+  isShuffle=!isShuffle;
+  this.classList.toggle("active",isShuffle);
+}
+
+document.getElementById("next").onclick=()=>{
+  i=isShuffle?Math.floor(Math.random()*songs.length):(i+1)%songs.length;
+  load();audio.play();
+}
+</script>
+
+</body>
+</html>
